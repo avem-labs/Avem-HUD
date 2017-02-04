@@ -5,3 +5,14 @@ body {
 	display: flex;
 	justify-content: center;
 }
+
+.label {
+	color: white;
+	flex: 1 0 auto;
+	background-color: rgba(255, 255, 255, 0.1);
+	font-size: 20px;
+	font-family: Monaco;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

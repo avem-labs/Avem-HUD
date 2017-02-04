@@ -5,17 +5,30 @@
 //  >>  ...............
 //
 //=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
-let oop = new dashboard(".screen");
+let HUD = new dashboard(".screen");
 
 $(() => {
-	setInterval(UnitTest, 25);
+	// if (window.DeviceMotionEvent) {
+	// 	alert("Ok");
+	// }
+	window.addEventListener('deviceorientation', (e)=>{
+		let pitch = e.gamma;
+		let roll = -e.beta;
+		let yaw = -e.alpha;
+		if (pitch > 0)
+			roll = 180 - roll;
+		$(".label").eq(0).text(Math.round(pitch));
+		$(".label").eq(1).text(Math.round(roll));
+		HUD.fresh(pitch, roll, yaw);
+	}, false);
+	// setInterval(UnitTest, 25);
 	// oop.fresh(0, 0, 0);
 	// oop.test();
 	// aka.test();
 });
 let ang = 0;
 function UnitTest() {
-	oop.fresh(0, ang, 0);
+	HUD.fresh(0, ang, 0);
 	ang++;
 }
 
@@ -34,6 +47,9 @@ function dashboard(component) {
 	// Set up origin
 	this.cxt.translate(this.width/2, this.height/2);
 
+	// Angle translate
+	this.pitchOffset = 90;
+	this.pitchLocation = "m";
 
 	this.fresh = (Pitch, Roll, Yaw) => {
 		let cxt = this.cxt;
@@ -46,8 +62,28 @@ function dashboard(component) {
 
 
 		this.drawAim();
-		this.drawRoll(Roll);
+		this.drawSkyline(Roll, Pitch);
 	};
+
+	this.drawSkyline = (r, p) => {
+		// Handle translate
+
+		let cxt = this.cxt;
+		let space = this.aimLenght;
+		cxt.save()
+		cxt.translate(0, p);
+		cxt.rotate(r*Math.PI/180);
+
+		cxt.beginPath();
+		cxt.moveTo(-space/2, 0);
+		cxt.lineTo(-1000, 0);
+		cxt.moveTo(space/2, 0);
+		cxt.lineTo(1000, 0);
+		cxt.strokeStyle = this.theme.color;
+		cxt.stroke();
+
+		cxt.restore();
+	}
 
 	this.drawAim = () => {
 		let cxt = this.cxt;
@@ -100,23 +136,6 @@ function dashboard(component) {
 		cxt.lineTo(spot+delta, -delta);
 		cxt.lineTo(this.aimLenght, -delta);
 
-	}
-
-	this.drawRoll = (angle) => {
-		let cxt = this.cxt;
-		let space = this.aimLenght;
-		cxt.save()
-		cxt.rotate(angle*Math.PI/180);
-
-		cxt.beginPath();
-		cxt.moveTo(-space/2, 0);
-		cxt.lineTo(-1000, 0);
-		cxt.moveTo(space/2, 0);
-		cxt.lineTo(1000, 0);
-		cxt.strokeStyle = this.theme.color;
-		cxt.stroke();
-
-		cxt.restore();
 	}
 
 }
