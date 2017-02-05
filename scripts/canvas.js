@@ -134,7 +134,7 @@ function dashboard(component) {
 		let angle = g__pitch>0?g__pitch-this.pitchOffset:g__pitch+this.pitchOffset
 		cxt.font = y*2+"px Menlo";
 		cxt.fillStyle = this.theme.color;
-		cxt.fillText(-Math.round(angle), x+y, y-2);
+		cxt.fillText(Math.round(angle), x+y, y-2);
 
 		// Ruler
 		let x_offset = this.aimLenght/2*.7;
