@@ -39,6 +39,22 @@ function dashboard(component) {
 	this.theme = {
 		color: "#3cc7e8",
 		bgColor: "#262626",
+		ghost_white: "#F8F8F0",
+		light_ghost_white: "#F8F8F2",
+		light_gray: "#CCC",
+		gray: "#888",
+		brown_gray: "#49483E",
+		dark_gray: "#282828",
+
+		yellow: "#E6DB74",
+		blue: "#66D9EF",
+		pink: "#F92672",
+		purple: "#AE81FF",
+		brown: "#75715E",
+		orange: "#FD971F",
+		light_orange: "#FFD569",
+		green: "#A6E22E",
+		sea_green: "#529B2F"
 	};
 
 	this.aimLenght = 280;
@@ -63,16 +79,15 @@ function dashboard(component) {
 		cxt.fillStyle = this.theme.bgColor;
 		cxt.fillRect(-this.width/2, -this.height/2, this.width, this.height);
 
-
+		this.drawRulerOfRoll(Roll);
 		this.drawAim();
 		this.drawSkyline(Roll, Pitch);
 	};
 
 	this.drawSkyline = (r, p) => {
-		// Handle translate
-
 		let cxt = this.cxt;
 		let space = this.aimLenght;
+		// Handle translate
 		cxt.save()
 		cxt.translate(0, this.height/2 * ((p>0?p-this.pitchOffset:p+this.pitchOffset)/90));
 		cxt.rotate(r*Math.PI/180);
@@ -201,6 +216,31 @@ function dashboard(component) {
 				}
 			}
 		}
+		cxt.restore();
+	};
+	this.drawRulerOfRoll = (offset) => {
+		// graphic ruler of angle
+		let rulerStart = this.aimLenght/2*.3;
+		let rulerEnd = rulerStart+20;
+		let cxt = this.cxt;
+		let fontSize = 10;
+		let label_cap = 5;
+		cxt.save();
+		cxt.rotate(offset*Math.PI/180);
+		cxt.beginPath();
+		for(let angle = 0; angle < 36; angle++) {
+			cxt.moveTo(rulerEnd, 0);
+			cxt.lineTo((angle%3)?rulerStart:rulerStart-10, 0);
+
+			if(!(angle%3)) {
+				cxt.fillStyle = this.theme.orange;
+				cxt.font = fontSize+"px Menlo"
+				cxt.fillText((angle>18)?(angle-36)*10:angle*10, rulerEnd+label_cap, fontSize/2);
+			}
+			cxt.rotate(10*Math.PI/180);
+		}
+		cxt.strokeStyle = "rgba(255, 255, 255, .5)";
+		cxt.stroke();
 		cxt.restore();
 	};
 };
