@@ -8,31 +8,52 @@
 let HUD = new dashboard(".screen");
 
 $(() => {
+	setInterval(UnitTest, 10);
+
 	// if (window.DeviceMotionEvent) {
 	// 	alert("Ok");
 	// }
-	window.addEventListener('deviceorientation', (e)=>{
-		let pitch = -e.gamma;
-		let roll = -e.beta;
-		let yaw = -e.alpha;
-		g__pitch = pitch;
-		g__roll = roll;
-		g__yaw = yaw;
-		if (pitch < 0)
-			roll = -180 - roll;
-		// $(".label").eq(0).text(Math.round(pitch));
-		// $(".label").eq(1).text(Math.round(roll));
-		HUD.fresh(pitch, roll, yaw);
-	}, false);
-	// setInterval(UnitTest, 25);
+
+	// window.addEventListener('deviceorientation', (e)=>{
+	// 	let pitch = -e.gamma;
+	// 	let roll = -e.beta;
+	// 	let yaw = -e.alpha;
+	// 	g__pitch = pitch;
+	// 	g__roll = roll;
+	// 	g__yaw = yaw;
+	// 	if (pitch < 0)
+	// 		roll = -180 - roll;
+	// $.getJSON('api/status', (json) => {
+	// 	g__pitch = json.Pitch;
+	// 	g__roll = json.Roll;
+	// 	g__yaw = json.Yaw;
+	// 	if (pitch < 0)
+	// 		roll = -180 - roll;
+	// })
+	// 	// $(".label").eq(0).text(Math.round(pitch));
+	// 	// $(".label").eq(1).text(Math.round(roll));
+	// 	HUD.fresh(pitch, roll, yaw);
+	// }, false);
 	// oop.fresh(0, 0, 0);
 	// oop.test();
 	// aka.test();
 });
-let ang = 0;
 function UnitTest() {
-	HUD.fresh(0, ang, 0);
-	ang++;
+	let pitch, roll, yaw;
+	$.getJSON('api/status', (json) => {
+		console.log(json);
+		pitch = json.Pitch;
+		roll = json.Roll;
+		yaw = json.Yaw;
+
+		g__pitch = pitch;
+		g__roll = roll;
+		g__yaw = yaw;
+		// if (g__pitch < 0)
+		// 	g__roll = -180 - g__roll;
+	})
+
+	HUD.fresh(g__pitch, g__roll, g__yaw);
 }
 
 function dashboard(component) {
@@ -89,7 +110,7 @@ function dashboard(component) {
 		let space = this.aimLenght;
 		// Handle translate
 		cxt.save()
-		cxt.translate(0, this.height/2 * ((p>0?p-this.pitchOffset:p+this.pitchOffset)/90));
+		cxt.translate(0, this.height/2 * ((p+this.pitchOffset)/90));
 		cxt.rotate(r*Math.PI/180);
 
 		cxt.beginPath();
@@ -146,7 +167,7 @@ function dashboard(component) {
 
 	this.drawRuler = (x, y) => {
 		let cxt = this.cxt;
-		let angle = g__pitch>0?g__pitch-this.pitchOffset:g__pitch+this.pitchOffset
+		let angle = g__pitch
 		cxt.font = y*2+"px Menlo";
 		cxt.fillStyle = this.theme.color;
 		cxt.fillText(Math.round(angle), x+y, y-2);
