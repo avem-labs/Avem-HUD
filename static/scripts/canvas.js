@@ -8,7 +8,7 @@
 let HUD = new dashboard(".screen");
 
 $(() => {
-	setInterval(UnitTest, 10);
+	setInterval(UnitTest, 1000);
 
 	// if (window.DeviceMotionEvent) {
 	// 	alert("Ok");
@@ -100,10 +100,27 @@ function dashboard(component) {
 		cxt.fillStyle = this.theme.bgColor;
 		cxt.fillRect(-this.width/2, -this.height/2, this.width, this.height);
 
+		this.filter();
 		this.drawRulerOfRoll(Roll);
 		this.drawAim();
 		this.drawSkyline(Roll, Pitch);
 	};
+
+	this.filter = () => {
+		let cxt = this.cxt;
+		let gap = cxt.lineWidth;
+		cxt.save();
+		cxt.translate(-this.width/2, -this.height/2);
+		cxt.beginPath();
+
+		for (let i = 0; i < this.height; i+=gap*6) {
+			cxt.moveTo(0, i);
+			cxt.lineTo(this.width, i);
+		}
+		cxt.strokeStyle = "#000000";
+		cxt.stroke();
+		cxt.restore();
+	}
 
 	this.drawSkyline = (r, p) => {
 		let cxt = this.cxt;
