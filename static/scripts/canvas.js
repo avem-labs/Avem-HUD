@@ -109,7 +109,7 @@ function dashboard(component) {
 		let cxt = this.cxt;
 		let space = this.aimLenght;
 		// Handle translate
-		cxt.save()
+		cxt.save();
 		cxt.translate(0, this.height/2 * ((p+this.pitchOffset)/90));
 		cxt.rotate(r*Math.PI/180);
 
