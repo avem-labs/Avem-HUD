@@ -8,7 +8,7 @@
 let HUD = new dashboard(".screen");
 
 $(() => {
-	setInterval(UnitTest, 1000);
+	setInterval(UnitTest, 100);
 
 	// if (window.DeviceMotionEvent) {
 	// 	alert("Ok");
