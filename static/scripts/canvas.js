@@ -59,6 +59,7 @@ function UnitTest() {
 function dashboard(component) {
 	this.theme = {
 		color: "#3cc7e8",
+		light_blue: "#24D7DF",
 		bgColor: "#262626",
 		ghost_white: "#F8F8F0",
 		light_ghost_white: "#F8F8F2",
@@ -258,7 +259,10 @@ function dashboard(component) {
 	};
 	this.drawRulerOfRoll = (offset) => {
 		// graphic ruler of angle
-		let rulerStart = this.aimLenght/2*.3;
+		let scale = 2;
+		let split = 2; // Angle
+
+		let rulerStart = this.aimLenght/2*scale;
 		let rulerEnd = rulerStart+20;
 		let cxt = this.cxt;
 		let fontSize = 10;
@@ -266,18 +270,18 @@ function dashboard(component) {
 		cxt.save();
 		cxt.rotate(offset*Math.PI/180);
 		cxt.beginPath();
-		for(let angle = 0; angle < 36; angle++) {
+		for(let angle = 0; angle < 360/split; angle++) {
 			cxt.moveTo(rulerEnd, 0);
-			cxt.lineTo((angle%3)?rulerStart:rulerStart-10, 0);
+			cxt.lineTo((angle%(30/split))?rulerStart:rulerStart-10, 0);
 
-			if(!(angle%3)) {
-				cxt.fillStyle = this.theme.orange;
-				cxt.font = fontSize+"px Menlo"
-				cxt.fillText((angle>18)?(angle-36)*10:angle*10, rulerEnd+label_cap, fontSize/2);
+			if(!(angle%(30/split))) {
+				cxt.fillStyle = this.theme.light_orange;
+				cxt.font = fontSize+"px Menlo";
+				cxt.fillText((angle>18)?(angle-360/split)*split:angle*split, rulerEnd+label_cap, fontSize/2);
 			}
-			cxt.rotate(10*Math.PI/180);
+			cxt.rotate(split*Math.PI/180);
 		}
-		cxt.strokeStyle = "rgba(255, 255, 255, .5)";
+		cxt.strokeStyle = this.theme.light_blue;
 		cxt.stroke();
 		cxt.restore();
 	};
