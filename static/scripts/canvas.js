@@ -272,7 +272,9 @@ function dashboard(component) {
 		cxt.beginPath();
 		for(let angle = 0; angle < 360/split; angle++) {
 			cxt.moveTo(rulerEnd, 0);
-			cxt.lineTo((angle%(30/split))?rulerStart:rulerStart-10, 0);
+			// cxt.lineTo((angle%(30/split))?rulerStart:rulerStart-10, 0);
+			let delta = Math.abs((angle*split%10-5)/10);
+			cxt.lineTo(rulerStart+80*Math.pow(Math.cos(delta+1),2), 0);
 
 			if(!(angle%(30/split))) {
 				cxt.fillStyle = this.theme.light_orange;
