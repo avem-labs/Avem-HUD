@@ -2,8 +2,8 @@
 import serial
 from flask import Flask, url_for, render_template, abort, redirect, g, jsonify
 
-# ser = serial.Serial('/dev/tty.SLAB_USBtoUART')
-# ser.baudrate = 115200
+ser = serial.Serial('/dev/tty.SLAB_USBtoUART')
+ser.baudrate = 115200
 
 app = Flask(__name__)
 
@@ -13,18 +13,14 @@ def index():
 
 @app.route('/api/status')
 def api():
-	# ser.write('$')
-	# st = ser.readline().replace('\00','').replace('\n','').replace('\r','').split('@')
-	# result = {
-	# 	'Pitch': st[0],
-	# 	'Roll': st[1],
-	# 	'Yaw': st[2]
-	# }
+	ser.write('$')
+	st = ser.readline().replace('\00','').replace('\n','').replace('\r','').split('@')
 	result = {
-		'Pitch': 0,
-		'Roll': 0,
-		'Yaw': 0
+		'Pitch': st[0],
+		'Roll': st[1],
+		'Yaw': st[2]
 	}
+
 	return jsonify(result)
 
 
