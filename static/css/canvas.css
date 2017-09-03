@@ -1,3 +1,7 @@
+@font-face {
+    font-family: "custom-play";
+    src: url('play.woff2') format('woff');
+}
 body {
     position: relative;
     margin: 0;

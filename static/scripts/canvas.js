@@ -78,6 +78,7 @@ function dashboard(component) {
 		green: "#A6E22E",
 		sea_green: "#529B2F"
 	};
+	this.font = "custom-play";
 
 	this.aimLenght = 280;
 
@@ -186,7 +187,7 @@ function dashboard(component) {
 	this.drawRuler = (x, y) => {
 		let cxt = this.cxt;
 		let angle = g__pitch
-		cxt.font = y*2+"px Menlo";
+		cxt.font = y*2+"px "+this.font;
 		cxt.fillStyle = this.theme.color;
 		cxt.fillText(Math.round(angle), x+y, y-2);
 
@@ -196,7 +197,7 @@ function dashboard(component) {
 		let space = unitLength;
 		let item_width = 20;
 		let item_height = 1;
-		let fontSize = 10;
+		let fontSize = 12;
 		let label_cap = 5;
 
 		cxt.save();
@@ -208,7 +209,7 @@ function dashboard(component) {
 				cxt.fillRect(-item_width/2, 0, item_width, item_height);
 				// label
 				cxt.fillStyle = this.theme.color;
-				cxt.font = fontSize+"px Menlo"
+				cxt.font = fontSize+"px "+this.font
 				cxt.fillText(-d, -item_width*2, fontSize/2);
 				cxt.translate(0, space);
 			} else {
@@ -237,7 +238,7 @@ function dashboard(component) {
 				cxt.fillRect(-item_width/2, 0, item_width, item_height);
 				// label
 				cxt.fillStyle = this.theme.color;
-				cxt.font = fontSize+"px Menlo"
+				cxt.font = fontSize+"px "+this.font
 				cxt.fillText(-d, -item_width*2, fontSize/2);
 				cxt.translate(0, -space);
 			} else {
@@ -265,7 +266,7 @@ function dashboard(component) {
 		let rulerStart = this.aimLenght/2*scale;
 		let rulerEnd = rulerStart+20;
 		let cxt = this.cxt;
-		let fontSize = 10;
+		let fontSize = 12;
 		let label_cap = 5;
 		cxt.save();
 		cxt.rotate(offset*Math.PI/180);
@@ -278,7 +279,7 @@ function dashboard(component) {
 
 			if(!(angle%(30/split))) {
 				cxt.fillStyle = this.theme.light_orange;
-				cxt.font = fontSize+"px Menlo";
+				cxt.font = fontSize+"px "+this.font;
 				cxt.fillText((angle>18)?(angle-360/split)*split:angle*split, rulerEnd+label_cap, fontSize/2);
 			}
 			cxt.rotate(split*Math.PI/180);
