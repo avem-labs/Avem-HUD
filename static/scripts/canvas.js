@@ -46,6 +46,9 @@ function UnitTest() {
 		roll = json.Roll;
 		yaw = json.Yaw;
 
+		motor1 = json.Motor_1;
+		motor2 = json.Motor_2;
+
 		g__pitch = pitch;
 		g__roll = roll;
 		g__yaw = yaw;
@@ -53,14 +56,14 @@ function UnitTest() {
 		// 	g__roll = -180 - g__roll;
 	})
 
-	HUD.fresh(g__pitch, g__roll, g__yaw);
+	HUD.fresh(g__pitch, g__roll, g__yaw, motor1, motor2);
 }
 
 function dashboard(component) {
 	this.theme = {
 		color: "#3cc7e8",
 		light_blue: "#24D7DF",
-		bgColor: "#262626",
+		bgColor: "#080B0E",
 		ghost_white: "#F8F8F0",
 		light_ghost_white: "#F8F8F2",
 		light_gray: "#CCC",
@@ -73,7 +76,7 @@ function dashboard(component) {
 		pink: "#F92672",
 		purple: "#AE81FF",
 		brown: "#75715E",
-		orange: "#FD971F",
+		orange: "#F1895A",
 		light_orange: "#FFD569",
 		green: "#A6E22E",
 		sea_green: "#529B2F"
@@ -93,7 +96,7 @@ function dashboard(component) {
 	this.pitchOffset = 90;
 	this.pitchLocation = "m";
 
-	this.fresh = (Pitch, Roll, Yaw) => {
+	this.fresh = (Pitch, Roll, Yaw, left, right) => {
 		let cxt = this.cxt;
 
 
@@ -103,6 +106,8 @@ function dashboard(component) {
 		cxt.fillRect(-this.width/2, -this.height/2, this.width, this.height);
 
 		this.filter();
+		this.displayInformation(Pitch, Roll, Yaw, left, right);
+
 		this.drawRulerOfRoll(Roll);
 		this.drawAim();
 		this.drawSkyline(Roll, Pitch);
@@ -119,10 +124,81 @@ function dashboard(component) {
 			cxt.moveTo(0, i);
 			cxt.lineTo(this.width, i);
 		}
-		cxt.strokeStyle = "#000000";
+		cxt.strokeStyle = "#262626";
 		cxt.stroke();
 		cxt.restore();
 	}
+
+	this.displayInformation = (p, r, y, m1, m2) => {
+		let cxt = this.cxt;
+		cxt.save();
+
+		cxt.translate(5, 30);
+		this.addTitle(0, 0, "DEBUG MESSAGE");
+		cxt.translate(0, 30);
+
+		this.addLabel(0, 0, "PITCH");
+		cxt.translate(100, 0);
+		this.addLabel(0, 0, p);
+		cxt.translate(-100, 16);
+
+		this.addLabel(0, 0, "ROLL");
+		cxt.translate(100, 0);
+		this.addLabel(0, 0, r);
+		cxt.translate(-100, 16);
+
+		this.addLabel(0, 0, "YAW");
+		cxt.translate(100, 0);
+		this.addLabel(0, 0, y);
+		cxt.translate(-100, 16);
+
+		cxt.translate(0, 30);
+		this.addTitle(0, 0, "MOTOR SPEED");
+		cxt.translate(0, 30);
+
+		this.addLabel(0, 0, "PWM CH1");
+		cxt.translate(100, 0);
+		this.addLabel(0, 0, m1);
+		cxt.translate(-100, 16);
+
+		this.addLabel(0, 0, "PWM CH2");
+		cxt.translate(100, 0);
+		this.addLabel(0, 0, m2);
+		cxt.translate(-100, 16);
+
+
+		cxt.restore();
+	}
+
+	this.addTitle = (x, y, str) => {
+		let cxt = this.cxt;
+		cxt.save();
+		cxt.translate(-this.width/2, -this.height/2);
+		cxt.font = "18px "+this.font;
+		cxt.fillStyle = this.theme.light_ghost_white;
+		cxt.fillText(str, x, y);
+		cxt.translate(0, 10)
+		// cxt.lineWidth = .5;
+		cxt.beginPath();
+		cxt.moveTo(x, y);
+		cxt.lineTo(160, y);
+		cxt.lineTo(160+10, y+10);
+		cxt.strokeStyle = this.theme.orange;
+		cxt.stroke();
+
+		cxt.restore();
+	}
+
+	this.addLabel = (x, y, str) => {
+		let cxt = this.cxt;
+		cxt.save();
+		cxt.translate(-this.width/2, -this.height/2);
+		cxt.font = "14px "+this.font;
+		cxt.fillStyle = this.theme.gray;
+		cxt.fillText(str, x, y);
+		cxt.restore();
+	}
+
 
 	this.drawSkyline = (r, p) => {
 		let cxt = this.cxt;
@@ -208,7 +284,7 @@ function dashboard(component) {
 				cxt.fillStyle = "rgba(255, 255, 255, 1)";
 				cxt.fillRect(-item_width/2, 0, item_width, item_height);
 				// label
-				cxt.fillStyle = this.theme.color;
+				cxt.fillStyle = this.theme.orange;
 				cxt.font = fontSize+"px "+this.font
 				cxt.fillText(-d, -item_width*2, fontSize/2);
 				cxt.translate(0, space);
@@ -237,7 +313,7 @@ function dashboard(component) {
 				cxt.fillStyle = "rgba(255, 255, 255, 1)";
 				cxt.fillRect(-item_width/2, 0, item_width, item_height);
 				// label
-				cxt.fillStyle = this.theme.color;
+				cxt.fillStyle = this.theme.orange;
 				cxt.font = fontSize+"px "+this.font
 				cxt.fillText(-d, -item_width*2, fontSize/2);
 				cxt.translate(0, -space);

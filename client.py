@@ -18,7 +18,9 @@ def api():
 	result = {
 		'Pitch': st[0],
 		'Roll': st[1],
-		'Yaw': st[2]
+		'Yaw': st[2],
+		'Motor_1': st[3],
+		'Motor_2': st[4]
 	}
 
 	return jsonify(result)
