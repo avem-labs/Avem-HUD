@@ -71,9 +71,13 @@ function dashboard(component) {
 		brown_gray: "#49483E",
 		dark_gray: "#282828",
 
+		// red: "#CD7186",
+		red: "#D15563",
+
 		yellow: "#E6DB74",
 		blue: "#66D9EF",
-		pink: "#F92672",
+		pink: "#E9CEBF",
+		// pink: "#F92672",
 		purple: "#AE81FF",
 		brown: "#75715E",
 		orange: "#F1895A",
@@ -82,6 +86,7 @@ function dashboard(component) {
 		sea_green: "#529B2F"
 	};
 	this.font = "custom-play";
+	this.num_font = "custom-dig";
 
 	this.aimLenght = 280;
 
@@ -158,14 +163,16 @@ function dashboard(component) {
 
 		this.addLabel(0, 0, "PWM CH1");
 		cxt.translate(100, 0);
-		this.addLabel(0, 0, m1);
+		this.addLabel(0, 0, m1*1.0);
 		cxt.translate(-100, 16);
 
 		this.addLabel(0, 0, "PWM CH2");
 		cxt.translate(100, 0);
-		this.addLabel(0, 0, m2);
+		this.addLabel(0, 0, m2*1.0);
 		cxt.translate(-100, 16);
 
+		this.addThrottle(380, 140, m2);
+		this.addThrottle(-380, 140, m1);
 
 		cxt.restore();
 	}
@@ -196,6 +203,38 @@ function dashboard(component) {
 		cxt.font = "14px "+this.font;
 		cxt.fillStyle = this.theme.gray;
 		cxt.fillText(str, x, y);
+		cxt.restore();
+	}
+
+	this.addThrottle = (x, y, v) => {
+		let p = (v - 1620) / 1980;
+		let cxt				= this.cxt;
+		let radiusOutside	= 90;
+		let radiusInside	= 70;
+		let angle			= 5;
+		cxt.save();
+		cxt.translate(x, y);
+		cxt.font = "40px "+this.num_font;
+		cxt.fillStyle = p > 0.8 ? this.theme.red:this.theme.light_blue;
+		cxt.fillText(v*1.0, -35, 0);
+
+		cxt.lineWidth = 4;
+		cxt.beginPath();
+		for (let i = 0; i <= (180/angle)*p; i++) {
+			cxt.moveTo(-radiusInside, 0);
+			cxt.lineTo(-radiusOutside, 0);
+			cxt.rotate(angle*Math.PI/180);
+		}
+		cxt.strokeStyle = this.theme.pink;
+		cxt.stroke();
+		cxt.beginPath();
+		for (let i = 0; i <= (180/angle)*(1-p); i++) {
+			cxt.moveTo(-radiusInside, 0);
+			cxt.lineTo(-radiusOutside, 0);
+			cxt.rotate(angle*Math.PI/180);
+		}
+		cxt.strokeStyle = this.theme.dark_gray;
+		cxt.stroke();
 		cxt.restore();
 	}
 
