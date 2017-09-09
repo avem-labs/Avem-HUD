@@ -9,34 +9,6 @@ let HUD = new dashboard(".screen");
 
 $(() => {
 	setInterval(UnitTest, 100);
-
-	// if (window.DeviceMotionEvent) {
-	// 	alert("Ok");
-	// }
-
-	// window.addEventListener('deviceorientation', (e)=>{
-	// 	let pitch = -e.gamma;
-	// 	let roll = -e.beta;
-	// 	let yaw = -e.alpha;
-	// 	g__pitch = pitch;
-	// 	g__roll = roll;
-	// 	g__yaw = yaw;
-	// 	if (pitch < 0)
-	// 		roll = -180 - roll;
-	// $.getJSON('api/status', (json) => {
-	// 	g__pitch = json.Pitch;
-	// 	g__roll = json.Roll;
-	// 	g__yaw = json.Yaw;
-	// 	if (pitch < 0)
-	// 		roll = -180 - roll;
-	// })
-	// 	// $(".label").eq(0).text(Math.round(pitch));
-	// 	// $(".label").eq(1).text(Math.round(roll));
-	// 	HUD.fresh(pitch, roll, yaw);
-	// }, false);
-	// oop.fresh(0, 0, 0);
-	// oop.test();
-	// aka.test();
 });
 function UnitTest() {
 	let pitch, roll, yaw;
@@ -88,7 +60,7 @@ function dashboard(component) {
 	this.font = "custom-play";
 	this.num_font = "custom-dig";
 
-	this.aimLenght = 280;
+	this.aimLenght = 180;
 
 	this.dom	 = $(component);
 	this.height	 = this.dom.height();
@@ -249,9 +221,9 @@ function dashboard(component) {
 
 		cxt.beginPath();
 		cxt.moveTo(-space/2, 0);
-		cxt.lineTo(-1000, 0);
+		cxt.lineTo(-270, 0);
 		cxt.moveTo(space/2, 0);
-		cxt.lineTo(1000, 0);
+		cxt.lineTo(270, 0);
 		cxt.strokeStyle = this.theme.color;
 		cxt.stroke();
 
@@ -294,6 +266,14 @@ function dashboard(component) {
 		cxt.lineTo(-mainSpot-delta, -delta);
 		cxt.lineTo(-this.aimLenght, -delta);
 
+		// top
+		cxt.moveTo(0, -20);
+		cxt.lineTo(0, -20-delta);
+
+		// bottom
+		cxt.moveTo(0, 20);
+		cxt.lineTo(0, 20+delta);
+
 		cxt.stroke();
 
 		this.drawRuler(mainSpot, delta);
@@ -302,75 +282,62 @@ function dashboard(component) {
 	this.drawRuler = (x, y) => {
 		let cxt = this.cxt;
 		let angle = g__pitch
-		cxt.font = y*2+"px "+this.font;
-		cxt.fillStyle = this.theme.color;
-		cxt.fillText(Math.round(angle), x+y, y-2);
 
 		// Ruler
-		let x_offset = this.aimLenght/2*.7;
-		let unitLength = 8;
+		let x_offset = this.aimLenght+100;
+		let unitLength = 4;
 		let space = unitLength;
 		let item_width = 20;
 		let item_height = 1;
-		let fontSize = 12;
-		let label_cap = 5;
+		let fontSize = 22;
+		let label_cap = item_width*2.3;
+
 
 		cxt.save();
-		cxt.translate(x_offset, angle*unitLength);
-		for(let d = 0; d <180; d++) {
-			if(!(d%10)) {
-				// line
-				cxt.fillStyle = "rgba(255, 255, 255, 1)";
-				cxt.fillRect(-item_width/2, 0, item_width, item_height);
-				// label
-				cxt.fillStyle = this.theme.orange;
-				cxt.font = fontSize+"px "+this.font
-				cxt.fillText(-d, -item_width*2, fontSize/2);
-				cxt.translate(0, space);
-			} else {
-				if(!(d%5)) {
-					cxt.fillStyle = "rgba(255, 255, 255, 1)";
-					cxt.fillRect(-item_width/2/2, 0, item_width/2, item_height);
-					cxt.translate(0, space);
+		cxt.translate(x_offset, 0);
+		cxt.beginPath();
+		cxt.moveTo(item_width*1.5, 0);
+		cxt.lineTo(item_width*1.5+fontSize*.5, fontSize*.5);
+		cxt.lineTo(item_width*1.5+fontSize*2.8, fontSize*.5);
+		cxt.moveTo(item_width*1.5, 0);
+		cxt.lineTo(item_width*1.5+fontSize*.5, -fontSize*.5);
+		cxt.lineTo(item_width*1.5+fontSize*2.8, -fontSize*.5);
+		cxt.lineTo(item_width*1.5+fontSize*2.8, fontSize*.5);
 
+		cxt.strokeStyle = this.theme.light_blue;
+		cxt.lineWidth = 3;
+		cxt.stroke();
+		cxt.lineWidth = 1;
+
+		cxt.font = fontSize+"px "+this.font;
+		cxt.fillStyle = this.theme.orange;
+		cxt.fillText(Math.round(angle), label_cap, fontSize*0.3);
+
+		cxt.translate(0, (angle-180)*unitLength);
+		cxt.font = fontSize*.5+"px "+this.font;
+
+		for(let d = -180; d<=180; d++) {
+			if(d>=-45-angle && d<=45-angle) {
+				if(!(d%10)) {
+					cxt.moveTo(0, 0);
+					cxt.lineTo(item_width, 0);
+					if((-d > Math.round(angle)+3) || (-d <Math.round(angle)-3)) {
+						cxt.fillText(-d, label_cap*.6, fontSize*0.3);
+					}
+
+				} else if(!(d%5)) {
+					cxt.moveTo(0, 0);
+					cxt.lineTo(item_width*.6, 0);
 				} else {
-					cxt.fillStyle = "rgba(255, 255, 255, .3)"
-					cxt.beginPath();
-					cxt.arc(0, 0, item_height, 0, 2*Math.PI);
-					cxt.fill();
-					cxt.translate(0, space);
+					cxt.moveTo(0, 0);
+					cxt.lineTo(item_width*.4, 0);
 				}
 			}
-		}
-		cxt.restore();
-		// Up
-		cxt.save();
-		cxt.translate(x_offset, angle*unitLength);
-		for(let d = 0; d >-180; d--) {
-			if(!(d%10)) {
-				// line
-				cxt.fillStyle = "rgba(255, 255, 255, 1)";
-				cxt.fillRect(-item_width/2, 0, item_width, item_height);
-				// label
-				cxt.fillStyle = this.theme.orange;
-				cxt.font = fontSize+"px "+this.font
-				cxt.fillText(-d, -item_width*2, fontSize/2);
-				cxt.translate(0, -space);
-			} else {
-				if(!(d%5)) {
-					cxt.fillStyle = "rgba(255, 255, 255, 1)";
-					cxt.fillRect(-item_width/2/2, 0, item_width/2, item_height);
-					cxt.translate(0, -space);
+			cxt.translate(0, space);
 
-				} else {
-					cxt.fillStyle = "rgba(255, 255, 255, .3)"
-					cxt.beginPath();
-					cxt.arc(0, 0, item_height, 0, 2*Math.PI);
-					cxt.fill();
-					cxt.translate(0, -space);
-				}
-			}
 		}
+		cxt.strokeStyle = this.theme.light_blue;
+		cxt.stroke();
 		cxt.restore();
 	};
 	this.drawRulerOfRoll = (offset) => {
@@ -381,21 +348,25 @@ function dashboard(component) {
 		let rulerStart = this.aimLenght/2*scale;
 		let rulerEnd = rulerStart+20;
 		let cxt = this.cxt;
-		let fontSize = 12;
+		let fontSize = 18;
 		let label_cap = 5;
 		cxt.save();
 		cxt.rotate(offset*Math.PI/180);
 		cxt.beginPath();
 		for(let angle = 0; angle < 360/split; angle++) {
-			cxt.moveTo(rulerEnd, 0);
-			// cxt.lineTo((angle%(30/split))?rulerStart:rulerStart-10, 0);
-			let delta = Math.abs((angle*split%10-5)/10);
-			cxt.lineTo(rulerStart+80*Math.pow(Math.cos(delta+1),2), 0);
+			let val = angle>180/split?(angle-360/split)*split:angle*split;
+			if(((val>=-45-offset) && (val<=45-offset)) || ((angle*split>=180-45-offset) && (angle*split<=180+45-offset))) {
 
-			if(!(angle%(30/split))) {
-				cxt.fillStyle = this.theme.light_orange;
-				cxt.font = fontSize+"px "+this.font;
-				cxt.fillText((angle>18)?(angle-360/split)*split:angle*split, rulerEnd+label_cap, fontSize/2);
+				cxt.moveTo(rulerEnd, 0);
+				// cxt.lineTo((angle%(30/split))?rulerStart:rulerStart-10, 0);
+				let delta = Math.abs((angle*split%10-5)/10);
+				cxt.lineTo(rulerStart+80*Math.pow(Math.cos(delta+1),2), 0);
+
+				if(!(angle%(30/split))) {
+					cxt.fillStyle = this.theme.light_orange;
+					cxt.font = fontSize+"px "+this.font;
+					cxt.fillText(val, rulerEnd+label_cap, fontSize/2);
+				}
 			}
 			cxt.rotate(split*Math.PI/180);
 		}
